@@ -1,200 +1,222 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calculadora de Porcentagem</title>
 
-<style>
-/* ====== ESTILO (original mantido) ====== */
-body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#667eea,#764ba2);
-    min-height:100vh;
-    padding:20px;
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+tailwind.config = {
+  darkMode: 'class'
 }
-.container {
-    max-width:900px;
-    margin:auto;
-    background:#fff;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 10px 30px rgba(0,0,0,.2);
-}
-h1{text-align:center}
-.subtitle{text-align:center;color:#666;margin-bottom:20px}
-.tab-buttons{display:flex;flex-wrap:wrap;border-bottom:2px solid #ddd}
-.tab-button{
-    border:none;background:none;padding:12px 20px;
-    font-weight:bold;cursor:pointer;color:#666
-}
-.tab-button.active{color:#007bff;border-bottom:3px solid #007bff}
-.tab-content{display:none}
-.tab-content.active{display:block}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-input,button{
-    width:100%;padding:12px;margin-top:5px;
-    border-radius:8px;border:2px solid #ddd;font-size:16px
-}
-button{
-    background:#007bff;color:#fff;border:none;font-weight:bold;
-    margin-top:15px;cursor:pointer
-}
-button:hover{background:#0056b3}
-.result{
-    background:#f8f9fa;margin-top:25px;padding:20px;
-    border-left:5px solid #28a745;border-radius:10px
-}
-.result-display{text-align:center;font-size:22px;font-weight:bold}
-.result-number{font-size:32px;color:#155724}
-.error{
-    background:#f8d7da;padding:15px;margin-top:20px;
-    border-left:5px solid #dc3545
-}
-.details-grid{
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:15px;margin-top:20px
-}
-.detail-card{background:#fff;padding:15px;border-radius:8px;text-align:center}
-.calculation-steps{
-    background:#fff3cd;padding:15px;border-radius:8px;margin-top:15px;
-    font-family:monospace
-}
-.examples{
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-    gap:10px;margin-top:10px
-}
-.example-card{
-    background:#e9ecef;padding:10px;border-radius:6px;
-    cursor:pointer;text-align:center;font-size:12px
-}
-.example-card:hover{background:#dee2e6}
-</style>
+</script>
 </head>
 
-<body>
-<div class="container">
+<body class="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 
+             dark:from-gray-900 dark:to-gray-800 p-6 transition-colors">
 
-<h1>📊 Calculadora de Porcentagem</h1>
-<div class="subtitle">Cálculos rápidos e precisos</div>
+<div class="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 transition">
 
-<div class="tab-buttons">
-    <button class="tab-button active" onclick="openTab('calcular',this)">🧮 Calcular %</button>
-    <button class="tab-button" onclick="openTab('aumento',this)">📈 Aumento</button>
-    <button class="tab-button" onclick="openTab('desconto',this)">📉 Desconto</button>
-    <button class="tab-button" onclick="openTab('variacao',this)">🔄 Variação</button>
-    <button class="tab-button" onclick="openTab('regratres',this)">🔢 Regra de 3</button>
+<!-- HEADER -->
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-800 dark:text-white">
+      📊 Calculadora de Porcentagem
+    </h1>
+    <p class="text-gray-500 dark:text-gray-400">
+      Cálculos rápidos e precisos
+    </p>
+  </div>
+
+  <!-- DARK MODE -->
+  <button onclick="toggleDark()"
+    class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 
+           text-gray-800 dark:text-white hover:scale-105 transition">
+    🌙 / ☀️
+  </button>
 </div>
 
-<!-- ================== CALCULAR % ================== -->
-<div id="calcular" class="tab-content active">
-    <input id="valorBase" type="number" placeholder="Valor base">
-    <input id="porcentagem" type="number" placeholder="Porcentagem (%)">
-    <button onclick="calcularPorcentagem()">Calcular</button>
-    <div id="resultadoCalculo"></div>
+<!-- TABS -->
+<div class="flex flex-wrap border-b dark:border-gray-700 mb-6">
+  <button class="tab-btn active">🧮 Calcular %</button>
+  <button class="tab-btn">📈 Aumento</button>
+  <button class="tab-btn">📉 Desconto</button>
+  <button class="tab-btn">🔄 Variação</button>
+  <button class="tab-btn">🔢 Regra de 3</button>
 </div>
 
-<!-- ================== AUMENTO ================== -->
-<div id="aumento" class="tab-content">
-    <input id="valorAumento" type="number" placeholder="Valor base">
-    <input id="porcAumento" type="number" placeholder="Porcentagem (%)">
-    <button onclick="calcularAumento()">Calcular aumento</button>
-    <div id="resultadoAumento"></div>
-</div>
-
-<!-- ================== DESCONTO ================== -->
-<div id="desconto" class="tab-content">
-    <input id="valorDesconto" type="number" placeholder="Valor base">
-    <input id="porcDesconto" type="number" placeholder="Porcentagem (%)">
-    <button onclick="calcularDesconto()">Calcular desconto</button>
-    <div id="resultadoDesconto"></div>
-</div>
-
-<!-- ================== VARIAÇÃO ================== -->
-<div id="variacao" class="tab-content">
-    <input id="valorAntigo" type="number" placeholder="Valor antigo">
-    <input id="valorNovo" type="number" placeholder="Valor novo">
-    <button onclick="calcularVariacao()">Calcular variação</button>
-    <div id="resultadoVariacao"></div>
-</div>
-
-<!-- ================== REGRA DE 3 ================== -->
-<div id="regratres" class="tab-content">
-    <input id="valorA" type="number" placeholder="Valor A">
-    <input id="valorB" type="number" placeholder="Valor B">
-    <input id="valorC" type="number" placeholder="Valor C">
-    <button onclick="calcularRegraTres()">Calcular</button>
-    <div id="resultadoRegra"></div>
-</div>
+<!-- CONTENT -->
+<div id="content"></div>
 
 </div>
 
 <script>
-/* ===== UTIL ===== */
+/* ===== DARK MODE ===== */
+function toggleDark(){
+  document.documentElement.classList.toggle('dark');
+}
+
+/* ===== TABS ===== */
+const tabs = ['calcular','aumento','desconto','variacao','regratres'];
+const buttons = document.querySelectorAll('.tab-btn');
+const content = document.getElementById('content');
+
+buttons.forEach((btn,i)=>{
+  btn.onclick=()=>{
+    buttons.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTab(tabs[i]);
+  }
+});
+
+document.querySelector('.tab-btn').classList.add('active');
+
+/* ===== UI HELPERS ===== */
+const input = p => `
+<input type="number" placeholder="${p}"
+class="w-full p-3 border-2 border-gray-200 dark:border-gray-700 
+rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-white
+focus:ring-2 focus:ring-blue-500 outline-none">
+`;
+
+const button = (t,fn) => `
+<button onclick="${fn}"
+class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold
+py-3 rounded-lg transition hover:scale-[1.02]">
+${t}
+</button>
+`;
+
+const error = () => `
+<div class="mt-4 bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-200
+border-l-4 border-red-500 p-4 rounded-lg">
+Preencha todos os campos corretamente
+</div>
+`;
+
+const result = (html) => `
+<div class="mt-6 bg-green-50 dark:bg-green-900 border-l-4 border-green-500
+p-5 rounded-lg animate-fade">
+${html}
+</div>
+`;
+
 const moeda = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 
-function openTab(id,btn){
-    document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    btn.classList.add('active');
+/* ===== RENDER TABS ===== */
+function renderTab(tab){
+content.innerHTML = {
+calcular: `
+${input('Valor base')}
+${input('Porcentagem (%)')}
+${button('Calcular','calcPerc()')}
+<div id="r"></div>
+`,
+aumento: `
+${input('Valor base')}
+${input('Porcentagem (%)')}
+${button('Calcular aumento','calcAum()')}
+<div id="r"></div>
+`,
+desconto: `
+${input('Valor base')}
+${input('Porcentagem (%)')}
+${button('Calcular desconto','calcDesc()')}
+<div id="r"></div>
+`,
+variacao: `
+${input('Valor antigo')}
+${input('Valor novo')}
+${button('Calcular variação','calcVar()')}
+<div id="r"></div>
+`,
+regratres: `
+${input('Valor A')}
+${input('Valor B')}
+${input('Valor C')}
+${button('Calcular','calcR3()')}
+<div id="r"></div>
+`
+}[tab];
+}
+renderTab('calcular');
+
+/* ===== CALCULOS ===== */
+function getInputs(){
+return [...content.querySelectorAll('input')].map(i=>+i.value);
 }
 
-/* ===== CÁLCULOS ===== */
-function calcularPorcentagem(){
-    const v = +valorBase.value, p = +porcentagem.value;
-    if(!v || !p) return erro('resultadoCalculo');
-    const r = v*(p/100);
-    resultadoCalculo.innerHTML = render(v,p,r,r);
+function calcPerc(){
+const [v,p]=getInputs();
+if(!v||!p) return r.innerHTML=error();
+const r1=v*(p/100);
+r.innerHTML=result(`
+<div class="text-center">
+<div class="text-3xl font-bold text-green-700 dark:text-green-300">${moeda(r1)}</div>
+</div>`);
 }
 
-function calcularAumento(){
-    const v=+valorAumento.value,p=+porcAumento.value;
-    if(!v||!p)return erro('resultadoAumento');
-    const r=v*(p/100),f=v+r;
-    resultadoAumento.innerHTML=render(v,p,r,f);
+function calcAum(){
+const [v,p]=getInputs();
+if(!v||!p) return r.innerHTML=error();
+const r1=v*(p/100);
+r.innerHTML=result(`
+<div class="text-center">
+<div class="text-3xl font-bold text-green-700 dark:text-green-300">${moeda(v+r1)}</div>
+</div>`);
 }
 
-function calcularDesconto(){
-    const v=+valorDesconto.value,p=+porcDesconto.value;
-    if(!v||!p)return erro('resultadoDesconto');
-    const r=v*(p/100),f=v-r;
-    resultadoDesconto.innerHTML=render(v,p,r,f);
+function calcDesc(){
+const [v,p]=getInputs();
+if(!v||!p) return r.innerHTML=error();
+const r1=v*(p/100);
+r.innerHTML=result(`
+<div class="text-center">
+<div class="text-3xl font-bold text-green-700 dark:text-green-300">${moeda(v-r1)}</div>
+</div>`);
 }
 
-function calcularVariacao(){
-    const a=+valorAntigo.value,n=+valorNovo.value;
-    if(!a||!n)return erro('resultadoVariacao');
-    const v=((n-a)/a)*100;
-    resultadoVariacao.innerHTML=`<div class="result">
-        <div class="result-display">Variação: ${v.toFixed(2)}%</div>
-    </div>`;
+function calcVar(){
+const [a,n]=getInputs();
+if(!a||!n) return r.innerHTML=error();
+const v=((n-a)/a)*100;
+r.innerHTML=result(`
+<div class="text-center text-3xl font-bold text-green-700 dark:text-green-300">
+${v.toFixed(2)}%
+</div>`);
 }
 
-function calcularRegraTres(){
-    const a=+valorA.value,b=+valorB.value,c=+valorC.value;
-    if(!a||!b||!c)return erro('resultadoRegra');
-    const x=(b*c)/a;
-    resultadoRegra.innerHTML=`<div class="result">
-        <div class="result-display">X = ${x.toFixed(2)}</div>
-    </div>`;
-}
-
-function render(v,p,r,f){
-return `<div class="result">
-<div class="result-display">${moeda(f)}</div>
-<div class="details-grid">
-<div class="detail-card">Valor: ${moeda(v)}</div>
-<div class="detail-card">Porcentagem: ${p}%</div>
-<div class="detail-card">Resultado: ${moeda(r)}</div>
-</div>
-</div>`;
-}
-
-function erro(id){
-document.getElementById(id).innerHTML=
-`<div class="error">Preencha todos os campos corretamente</div>`;
+function calcR3(){
+const [a,b,c]=getInputs();
+if(!a||!b||!c) return r.innerHTML=error();
+const x=(b*c)/a;
+r.innerHTML=result(`
+<div class="text-center text-3xl font-bold text-green-700 dark:text-green-300">
+X = ${x.toFixed(2)}
+</div>`);
 }
 </script>
+
+<style>
+.tab-btn{
+padding:12px 18px;
+font-weight:600;
+color:#6b7280;
+transition:.3s;
+}
+.tab-btn.active{
+color:#2563eb;
+border-bottom:3px solid #2563eb;
+}
+@keyframes fade{
+from{opacity:0;transform:translateY(10px)}
+to{opacity:1;transform:translateY(0)}
+}
+.animate-fade{animation:fade .4s ease}
+</style>
+
 </body>
 </html>
