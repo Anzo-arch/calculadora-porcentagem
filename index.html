@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de Porcentagem</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculadora de Porcentagem</title>
 
-<!-- Tailwind CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
 
-<script>
-tailwind.config = {
-  darkMode: 'class'
-}
-</script>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body class="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 
@@ -20,203 +19,38 @@ tailwind.config = {
 
 <div class="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 transition">
 
-<!-- HEADER -->
-<div class="flex justify-between items-center mb-6">
-  <div>
-    <h1 class="text-3xl font-bold text-gray-800 dark:text-white">
-      📊 Calculadora de Porcentagem
-    </h1>
-    <p class="text-gray-500 dark:text-gray-400">
-      Cálculos rápidos e precisos
-    </p>
+  <!-- HEADER -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-white">
+        📊 Calculadora de Porcentagem
+      </h1>
+      <p class="text-gray-500 dark:text-gray-400">
+        Cálculos rápidos e precisos
+      </p>
+    </div>
+
+    <button id="darkToggle"
+      class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 
+             text-gray-800 dark:text-white hover:scale-105 transition">
+      🌙 / ☀️
+    </button>
   </div>
 
-  <!-- DARK MODE -->
-  <button onclick="toggleDark()"
-    class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 
-           text-gray-800 dark:text-white hover:scale-105 transition">
-    🌙 / ☀️
-  </button>
-</div>
+  <!-- TABS -->
+  <div class="flex flex-wrap border-b dark:border-gray-700 mb-6">
+    <button class="tab-btn active" data-tab="calcular">🧮 Calcular %</button>
+    <button class="tab-btn" data-tab="aumento">📈 Aumento</button>
+    <button class="tab-btn" data-tab="desconto">📉 Desconto</button>
+    <button class="tab-btn" data-tab="variacao">🔄 Variação</button>
+    <button class="tab-btn" data-tab="regratres">🔢 Regra de 3</button>
+  </div>
 
-<!-- TABS -->
-<div class="flex flex-wrap border-b dark:border-gray-700 mb-6">
-  <button class="tab-btn active">🧮 Calcular %</button>
-  <button class="tab-btn">📈 Aumento</button>
-  <button class="tab-btn">📉 Desconto</button>
-  <button class="tab-btn">🔄 Variação</button>
-  <button class="tab-btn">🔢 Regra de 3</button>
-</div>
-
-<!-- CONTENT -->
-<div id="content"></div>
+  <!-- CONTENT -->
+  <div id="content"></div>
 
 </div>
 
-<script>
-/* ===== DARK MODE ===== */
-function toggleDark(){
-  document.documentElement.classList.toggle('dark');
-}
-
-/* ===== TABS ===== */
-const tabs = ['calcular','aumento','desconto','variacao','regratres'];
-const buttons = document.querySelectorAll('.tab-btn');
-const content = document.getElementById('content');
-
-buttons.forEach((btn,i)=>{
-  btn.onclick=()=>{
-    buttons.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    renderTab(tabs[i]);
-  }
-});
-
-document.querySelector('.tab-btn').classList.add('active');
-
-/* ===== UI HELPERS ===== */
-const input = p => `
-<input type="number" placeholder="${p}"
-class="w-full p-3 border-2 border-gray-200 dark:border-gray-700 
-rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-white
-focus:ring-2 focus:ring-blue-500 outline-none">
-`;
-
-const button = (t,fn) => `
-<button onclick="${fn}"
-class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold
-py-3 rounded-lg transition hover:scale-[1.02]">
-${t}
-</button>
-`;
-
-const error = () => `
-<div class="mt-4 bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-200
-border-l-4 border-red-500 p-4 rounded-lg">
-Preencha todos os campos corretamente
-</div>
-`;
-
-const result = (html) => `
-<div class="mt-6 bg-green-50 dark:bg-green-900 border-l-4 border-green-500
-p-5 rounded-lg animate-fade">
-${html}
-</div>
-`;
-
-const moeda = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-
-/* ===== RENDER TABS ===== */
-function renderTab(tab){
-content.innerHTML = {
-calcular: `
-${input('Valor base')}
-${input('Porcentagem (%)')}
-${button('Calcular','calcPerc()')}
-<div id="r"></div>
-`,
-aumento: `
-${input('Valor base')}
-${input('Porcentagem (%)')}
-${button('Calcular aumento','calcAum()')}
-<div id="r"></div>
-`,
-desconto: `
-${input('Valor base')}
-${input('Porcentagem (%)')}
-${button('Calcular desconto','calcDesc()')}
-<div id="r"></div>
-`,
-variacao: `
-${input('Valor antigo')}
-${input('Valor novo')}
-${button('Calcular variação','calcVar()')}
-<div id="r"></div>
-`,
-regratres: `
-${input('Valor A')}
-${input('Valor B')}
-${input('Valor C')}
-${button('Calcular','calcR3()')}
-<div id="r"></div>
-`
-}[tab];
-}
-renderTab('calcular');
-
-/* ===== CALCULOS ===== */
-function getInputs(){
-return [...content.querySelectorAll('input')].map(i=>+i.value);
-}
-
-function calcPerc(){
-const [v,p]=getInputs();
-if(!v||!p) return r.innerHTML=error();
-const r1=v*(p/100);
-r.innerHTML=result(`
-<div class="text-center">
-<div class="text-3xl font-bold text-green-700 dark:text-green-300">${moeda(r1)}</div>
-</div>`);
-}
-
-function calcAum(){
-const [v,p]=getInputs();
-if(!v||!p) return r.innerHTML=error();
-const r1=v*(p/100);
-r.innerHTML=result(`
-<div class="text-center">
-<div class="text-3xl font-bold text-green-700 dark:text-green-300">${moeda(v+r1)}</div>
-</div>`);
-}
-
-function calcDesc(){
-const [v,p]=getInputs();
-if(!v||!p) return r.innerHTML=error();
-const r1=v*(p/100);
-r.innerHTML=result(`
-<div class="text-center">
-<div class="text-3xl font-bold text-green-700 dark:text-green-300">${moeda(v-r1)}</div>
-</div>`);
-}
-
-function calcVar(){
-const [a,n]=getInputs();
-if(!a||!n) return r.innerHTML=error();
-const v=((n-a)/a)*100;
-r.innerHTML=result(`
-<div class="text-center text-3xl font-bold text-green-700 dark:text-green-300">
-${v.toFixed(2)}%
-</div>`);
-}
-
-function calcR3(){
-const [a,b,c]=getInputs();
-if(!a||!b||!c) return r.innerHTML=error();
-const x=(b*c)/a;
-r.innerHTML=result(`
-<div class="text-center text-3xl font-bold text-green-700 dark:text-green-300">
-X = ${x.toFixed(2)}
-</div>`);
-}
-</script>
-
-<style>
-.tab-btn{
-padding:12px 18px;
-font-weight:600;
-color:#6b7280;
-transition:.3s;
-}
-.tab-btn.active{
-color:#2563eb;
-border-bottom:3px solid #2563eb;
-}
-@keyframes fade{
-from{opacity:0;transform:translateY(10px)}
-to{opacity:1;transform:translateY(0)}
-}
-.animate-fade{animation:fade .4s ease}
-</style>
-
+<script type="module" src="js/app.js"></script>
 </body>
 </html>
